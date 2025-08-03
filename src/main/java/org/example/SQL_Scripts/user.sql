@@ -4,6 +4,8 @@ GRANT ALL PRIVILEGES ON DATABASE bankSystem TO postgres;
 
 CREATE SEQUENCE customer_seq start with 10000;
 
+CREATE SEQUENCE bank_seq start with 10000;
+
 CREATE TABLE bank
 (
     id   BIGSERIAL PRIMARY KEY,

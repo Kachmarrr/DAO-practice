@@ -1,8 +1,7 @@
 package org.example.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.example.util.DataTransferObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,9 +9,11 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Bank {
+@RequiredArgsConstructor
+public class Bank implements DataTransferObject {
 
     private long id;
+    @NonNull
     private String name;
 
     List<Customer> users = new ArrayList<>();

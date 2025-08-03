@@ -25,6 +25,7 @@ public class Customer implements DataTransferObject {
     @Builder.Default
     private BigDecimal balance = BigDecimal.ZERO;
 
+    @NonNull
     private List<Transaction> transactions;
 
     public long getId() {

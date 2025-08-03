@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CustomerDAO extends DataAccsessObject<Customer> {
@@ -19,6 +20,9 @@ public class CustomerDAO extends DataAccsessObject<Customer> {
 
     private static final String DELETE = "DELETE FROM customer WHERE id = ?";
 
+    private static final String READ = "SELECT id, first_name, last_name, email, balance, bank_id FROM customer";
+
+
     public CustomerDAO(Connection connection) {
         super(connection);
     }
@@ -27,29 +31,45 @@ public class CustomerDAO extends DataAccsessObject<Customer> {
     public Customer findById(long id) {
         Customer customer = new Customer();
 
-         try (PreparedStatement statement = this.connection.prepareStatement(GET_ONE)) {
+        try (PreparedStatement statement = this.connection.prepareStatement(GET_ONE)) {
 
-             statement.setLong(1, id);
-             ResultSet resultSet = statement.executeQuery();
-             while (resultSet.next()){
-                 customer.setId(resultSet.getLong("id"));
-                 customer.setFirstName(resultSet.getString("first_name"));
-                 customer.setLastName(resultSet.getString("last_name"));
-                 customer.setEmail(resultSet.getString("email"));
+            statement.setLong(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                customer.setId(resultSet.getLong("id"));
+                customer.setFirstName(resultSet.getString("first_name"));
+                customer.setLastName(resultSet.getString("last_name"));
+                customer.setEmail(resultSet.getString("email"));
                 // customer.setTransactions(resultSet.getString(""));
-             }
+            }
 
-         } catch (SQLException e) {
-             e.printStackTrace();
-             throw new RuntimeException(e);
-         }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
         return customer;
     }
 
     @Override
     public List<Customer> findAll() {
-        return List.of();
+        List<Customer> customers = new ArrayList<>();
+        try (PreparedStatement statement = this.connection.prepareStatement(READ)) {
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Customer customer = new Customer();
+                customer.setId(resultSet.getLong("id"));
+                customer.setFirstName(resultSet.getString("first_name"));
+                customer.setLastName(resultSet.getString("last_name"));
+                customer.setEmail(resultSet.getString("email"));
+                customer.setBalance(resultSet.getBigDecimal("balance"));
+                customers.add(customer);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return customers;
     }
+
 
     @Override
     public Customer update(Customer dto) {
@@ -91,8 +111,8 @@ public class CustomerDAO extends DataAccsessObject<Customer> {
     @Override
     public void delete(long id) {
         try (PreparedStatement statement = this.connection.prepareStatement(DELETE)) {
-                statement.setLong(1, id);
-                statement.execute();
+            statement.setLong(1, id);
+            statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
