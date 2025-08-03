@@ -1,13 +1,11 @@
 package org.example;
 
 
-import org.example.dao.CustomerDao;
+import org.example.dao.CustomerDAO;
 import org.example.models.Customer;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class Main {
     public static void main(String[] args) {
@@ -16,13 +14,11 @@ public class Main {
 
         try {
             Connection connection = dcm.getConnection();
-            Statement statement = connection.createStatement();
+            CustomerDAO customerDAO = new CustomerDAO(connection);
+            Customer customer = new Customer("John", "Adams", "jadams.wh.gov");
 
-
-            CustomerDao customerDao = new CustomerDao(connection);
-            Customer customer = customerDao.findById(26);
-
-            System.out.println(customer.getFirstName() + " " + customer.getLastName());
+            customerDAO.create(customer);
+            System.out.println(customer);
 
         } catch (SQLException e) {
             e.printStackTrace();

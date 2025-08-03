@@ -9,8 +9,8 @@ import java.util.List;
 public abstract class DataAccsessObject <T extends DataTransferObject> {
 
     protected final Connection connection;
-    protected final static String LAST_VAL = "SELECT last_value FROM";
-    protected final static String user_seq = "customer_seq";
+    protected final static String LAST_VAL = "SELECT last_value FROM ";
+    protected final static String CUSTOMER_SEQUENCE = "customer_seq";
 
     public DataAccsessObject(Connection connection) {
         super(); // ?

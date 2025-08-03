@@ -1,9 +1,6 @@
 package org.example.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.example.util.DataTransferObject;
 
 import java.math.BigDecimal;
@@ -12,18 +9,25 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@RequiredArgsConstructor
 @Builder
 public class Customer implements DataTransferObject {
 
     private Long id;
+    @NonNull
     private String firstName;
-    private String LastName;
+    @NonNull
+    private String lastName;
+    @NonNull
     private String email;
+
+    //private long bankId;
+    @Builder.Default
     private BigDecimal balance = BigDecimal.ZERO;
 
     private List<Transaction> transactions;
 
     public long getId() {
-        return id;
+        return id != null ? id : 0L;
     }
 }

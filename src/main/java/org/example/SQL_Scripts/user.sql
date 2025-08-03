@@ -2,7 +2,7 @@ CREATE DATABASE bankSystem;
 
 GRANT ALL PRIVILEGES ON DATABASE bankSystem TO postgres;
 
-CREATE SEQUENCE user_seq start with 10000;
+CREATE SEQUENCE customer_seq start with 10000;
 
 CREATE TABLE bank
 (
@@ -17,7 +17,7 @@ CREATE TABLE customer
     last_name  VARCHAR(50),
     email      VARCHAR(50),
     balance    DECIMAL(10, 2),
-    bank_id    BIGINT NOT NULL,
+    bank_id    BIGINT,
     FOREIGN KEY (bank_id) REFERENCES bank (id)
 );
 
