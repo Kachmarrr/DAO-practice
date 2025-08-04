@@ -3,9 +3,12 @@ package org.example;
 
 import org.example.dao.BankDAO;
 import org.example.dao.CustomerDAO;
+import org.example.dao.TransactionDAO;
 import org.example.models.Bank;
 import org.example.models.Customer;
+import org.example.models.Transaction;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -16,9 +19,11 @@ public class Main {
 
         try {
             Connection connection = dcm.getConnection();
-            CustomerDAO customerDAO = new CustomerDAO(connection);
+            TransactionDAO trxDao = new TransactionDAO(connection);
 
-            System.out.println(customerDAO.findAll().stream().count());
+            trxDao.findAllTransactionsByCustomerId(25).forEach(System.out::println);
+
+
 
         } catch (SQLException e) {
             e.printStackTrace();

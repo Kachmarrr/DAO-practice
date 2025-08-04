@@ -6,6 +6,8 @@ CREATE SEQUENCE customer_seq start with 10000;
 
 CREATE SEQUENCE bank_seq start with 10000;
 
+CREATE SEQUENCE transaction_seq start with 10000;
+
 CREATE TABLE bank
 (
     id   BIGSERIAL PRIMARY KEY,
@@ -57,8 +59,4 @@ VALUES ('Andrii', 'Kachmar', 'andrii.kachmar@example.com', 1500.50, 1),
        ('Volodymyr', 'Klymenko', 'volodymyr.klymenko@example.com', 2150.00, 1),
        ('Lesia', 'Martynenko', 'lesia.martynenko@example.com', 990.00, 1);
 
-
-
--- INSERT INTO user (id, first_name, last_name, email, balance, bank_id)
--- values
 

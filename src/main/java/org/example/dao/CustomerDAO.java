@@ -13,13 +13,9 @@ import java.util.List;
 public class CustomerDAO extends DataAccsessObject<Customer> {
 
     private static final String GET_ONE = "SELECT id, first_name, last_name, email, balance, bank_id FROM customer WHERE id=?";
-
     private static final String INSERT = "INSERT INTO customer (first_name, last_name, email, balance) VALUES (?, ?, ?, ?)";
-
     private static final String UPDATE = "UPDATE customer SET first_name = ?, last_name = ?, email = ?, balance = ? WHERE id = ?";
-
     private static final String DELETE = "DELETE FROM customer WHERE id = ?";
-
     private static final String READ = "SELECT id, first_name, last_name, email, balance, bank_id FROM customer";
 
 
@@ -65,6 +61,7 @@ public class CustomerDAO extends DataAccsessObject<Customer> {
                 customers.add(customer);
             }
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
         return customers;
@@ -100,7 +97,7 @@ public class CustomerDAO extends DataAccsessObject<Customer> {
 
             statement.execute();
 
-            int id = this.getLastVal(CUSTOMER_SEQUENCE);
+            long id = this.getLastVal(CUSTOMER_SEQUENCE);
             return this.findById(id);
         } catch (SQLException e) {
             e.printStackTrace();
