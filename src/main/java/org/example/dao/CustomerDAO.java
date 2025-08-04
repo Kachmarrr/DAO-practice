@@ -1,6 +1,6 @@
 package org.example.dao;
 
-import org.example.models.Customer;
+import org.example.model.Customer;
 import org.example.util.DataAccsessObject;
 
 import java.sql.Connection;
@@ -17,7 +17,6 @@ public class CustomerDAO extends DataAccsessObject<Customer> {
     private static final String UPDATE = "UPDATE customer SET first_name = ?, last_name = ?, email = ?, balance = ? WHERE id = ?";
     private static final String DELETE = "DELETE FROM customer WHERE id = ?";
     private static final String READ = "SELECT id, first_name, last_name, email, balance, bank_id FROM customer";
-
 
     public CustomerDAO(Connection connection) {
         super(connection);

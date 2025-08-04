@@ -27,10 +27,12 @@ CREATE TABLE customer
 
 CREATE TABLE transaction
 (
-    id          BIGSERIAL PRIMARY KEY,
-    amount      DECIMAL(10, 2) NOT NULL,
-    customer_id BIGINT         NOT NULL,
-    FOREIGN KEY (customer_id) REFERENCES customer (id)
+    id            BIGSERIAL PRIMARY KEY,
+    sender_id     BIGINT NOT NULL,
+    recipient_id  BIGINT NOT NULL,
+    amount        DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (sender_id) REFERENCES customer (id),
+    FOREIGN KEY (recipient_id) REFERENCES customer (id)
 );
 
 Insert INTO bank (id, name)

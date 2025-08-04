@@ -1,4 +1,4 @@
-package org.example.models;
+package org.example.model;
 
 import lombok.*;
 import org.example.util.DataTransferObject;

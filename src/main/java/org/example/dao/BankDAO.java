@@ -1,7 +1,6 @@
 package org.example.dao;
 
-import org.example.models.Bank;
-import org.example.models.Customer;
+import org.example.model.Bank;
 import org.example.util.DataAccsessObject;
 
 import java.sql.Connection;
@@ -63,7 +62,7 @@ public class BankDAO extends DataAccsessObject<Bank> {
 
     @Override
     public Bank update(Bank dto) {
-       Bank bank = null;
+        Bank bank = null;
         try (PreparedStatement statement = this.connection.prepareStatement(UPDATE)) {
 
             statement.setString(1, dto.getName());

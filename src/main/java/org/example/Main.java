@@ -1,14 +1,9 @@
 package org.example;
 
 
-import org.example.dao.BankDAO;
-import org.example.dao.CustomerDAO;
 import org.example.dao.TransactionDAO;
-import org.example.models.Bank;
-import org.example.models.Customer;
-import org.example.models.Transaction;
+import org.example.persistance.DatabaseConnectionManager;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 
