@@ -1,8 +1,9 @@
 package org.example.service.implementation;
 
+import org.example.dao.TransactionDAO;
 import org.example.model.Customer;
 import org.example.model.Transaction;
-import org.example.persistance.UnitOfWorkImpl;
+import org.example.persistance.JdbcUnitOfWork;
 import org.example.service.TransactionService;
 
 import java.math.BigDecimal;
@@ -11,53 +12,68 @@ import java.util.List;
 
 public class TransactionServiceImpl implements TransactionService {
 
-    private final UnitOfWorkImpl unitOfWork;
+    private final JdbcUnitOfWork unitOfWork;
+    private final TransactionDAO readOnlyTransactionDAO;
 
-    public TransactionServiceImpl(UnitOfWorkImpl unitOfWork) {
+    public TransactionServiceImpl(JdbcUnitOfWork unitOfWork, TransactionDAO readOnlyTransactionDAO) {
         this.unitOfWork = unitOfWork;
+        this.readOnlyTransactionDAO = readOnlyTransactionDAO;
     }
 
     @Override
     public Transaction proccesTransaction(Long recipientId, BigDecimal amount) {
-        Transaction transaction = Transaction.builder()
-                .recipient_id(recipientId)
-                .amount(amount)
-                .build();
+        try {
+            unitOfWork.begin(); // <- Обов’язково починаємо транзакцію
 
-        unitOfWork.getTransactionDAO().create(transaction);
+            Transaction transaction = Transaction.builder()
+                    .sender_id(22L)
+                    .recipient_id(recipientId)
+                    .amount(amount)
+                    .build();
 
-        return transaction;
+            Customer recipient = unitOfWork.getCustomerDAO().findById(recipientId);
+            recipient.setBalance(recipient.getBalance().add(amount));
+
+            unitOfWork.getCustomerDAO().update(recipient);
+            unitOfWork.getTransactionDAO().create(transaction);
+
+            unitOfWork.commit(); // ← Фіксуємо зміни
+
+            return transaction;
+        } catch (Exception e) {
+            try { unitOfWork.rollback(); } catch (Exception ignore) {}
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public Transaction transferTrxBetweenCustomers(Long senderId, Long recipientId, BigDecimal amount) {
-
-        Customer sender = unitOfWork.getCustomerDAO().findById(senderId);
-        Customer recipient = unitOfWork.getCustomerDAO().findById(senderId);
-
-        Transaction transaction;
-
         try (unitOfWork) {
-
             unitOfWork.begin();
+            Customer sender = unitOfWork.getCustomerDAO().findById(senderId);
+            Customer recipient = unitOfWork.getCustomerDAO().findById(recipientId);
+
             if (sender.getBalance().compareTo(amount) < 0) {
                 throw new IllegalArgumentException();
             }
 
-            sender.setBalance(sender.getBalance().subtract(amount)); // decrease sender balance
+            // Зменшуємо баланс sender
+            sender.setBalance(sender.getBalance().subtract(amount));
             unitOfWork.getCustomerDAO().update(sender);
 
-            recipient.setBalance(sender.getBalance().add(amount)); // increase recipient balance
+            // Збільшуємо баланс recipient (правильно)
+            recipient.setBalance(recipient.getBalance().add(amount));
             unitOfWork.getCustomerDAO().update(recipient);
 
-
-            transaction = Transaction.builder()
+            Transaction transaction = Transaction.builder()
                     .amount(amount)
                     .sender_id(senderId)
                     .recipient_id(recipientId)
                     .build();
 
+            unitOfWork.getTransactionDAO().create(transaction);
             unitOfWork.commit();
+            return transaction;
 
         } catch (SQLException e) {
             try {
@@ -66,27 +82,84 @@ public class TransactionServiceImpl implements TransactionService {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-
-        return transaction;
     }
 
     @Override
-    public List<Transaction> getTrx(Long customerId) {
-        return unitOfWork.getTransactionDAO().findAllTransactionsByCustomerId(customerId);
+    public Transaction getTrx(Long transactionId) {
+        return readOnlyTransactionDAO.findById(transactionId);
     }
 
     @Override
     public void updateTrx(Transaction newTransaction) { // ?
-        unitOfWork.getTransactionDAO().update(newTransaction);
+
+        try (unitOfWork) {
+            unitOfWork.begin();
+            Transaction oldTransaction = unitOfWork.getTransactionDAO().findById(newTransaction.getId());
+            if (oldTransaction == null) {
+                throw new IllegalArgumentException("Transaction not found");
+            }
+
+            Customer sender = unitOfWork.getCustomerDAO().findById(newTransaction.getSender_id());
+            Customer recipient = unitOfWork.getCustomerDAO().findById(newTransaction.getRecipient_id());
+            if (sender == null || recipient == null) {
+                throw new IllegalArgumentException("Sender or recipient not found");
+            }
+
+            sender.setBalance(sender.getBalance().add(oldTransaction.getAmount()));
+            recipient.setBalance(recipient.getBalance().subtract(oldTransaction.getAmount()));
+
+            if (sender.getBalance().compareTo(newTransaction.getAmount()) < 0) {
+                throw new IllegalArgumentException("Not enough balance");
+            }
+
+            sender.setBalance(sender.getBalance().subtract(newTransaction.getAmount()));
+            recipient.setBalance(recipient.getBalance().add(newTransaction.getAmount()));
+
+            unitOfWork.getCustomerDAO().update(sender);
+            unitOfWork.getCustomerDAO().update(recipient);
+
+            unitOfWork.getTransactionDAO().update(newTransaction);
+
+            unitOfWork.commit();
+        } catch (SQLException e) {
+            try {
+                unitOfWork.rollback();
+            } catch (SQLException ex) {}
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void deleteTrx(Long transactionId) {
-        unitOfWork.getTransactionDAO().delete(transactionId);
+        try {
+            unitOfWork.begin();
+            Transaction transaction = unitOfWork.getTransactionDAO().findById(transactionId);
+            Customer sender = unitOfWork.getCustomerDAO().findById(transaction.getSender_id());
+            Customer recipient = unitOfWork.getCustomerDAO().findById(transaction.getRecipient_id());
+
+            sender.setBalance(sender.getBalance().add(transaction.getAmount()));
+            unitOfWork.getCustomerDAO().update(sender);
+
+            recipient.setBalance(recipient.getBalance().subtract(transaction.getAmount()));
+            unitOfWork.getCustomerDAO().update(recipient);
+
+            unitOfWork.getTransactionDAO().delete(transactionId);
+
+            unitOfWork.commit();
+        } catch (SQLException e) {
+            try {
+                unitOfWork.rollback();
+            } catch (SQLException ex) {}
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public List<Transaction> getAllTrx() {
-        return unitOfWork.getTransactionDAO().findAll();
+        return readOnlyTransactionDAO.findAll();
+    }
+
+    public List<Transaction> getAllCustomerTransactions(Long customerId) {
+        return readOnlyTransactionDAO.findAllTransactionsByCustomerId(customerId);
     }
 }

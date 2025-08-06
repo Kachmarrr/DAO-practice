@@ -21,14 +21,25 @@ public class Customer implements DataTransferObject {
     @NonNull
     private String email;
 
-    //private long bankId;
+    private Long bankId;
     @Builder.Default
     private BigDecimal balance = BigDecimal.ZERO;
 
-    @NonNull
     private List<Transaction> transactions;
 
     public long getId() {
         return id != null ? id : 0L;
+    }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", balance=" + balance +
+                ", transactions=" + transactions +
+                '}';
     }
 }

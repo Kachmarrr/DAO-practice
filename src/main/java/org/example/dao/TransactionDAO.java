@@ -14,10 +14,10 @@ public class TransactionDAO extends DataAccsessObject<Transaction> {
 
     private static final String READ_ONE = "SELECT id, amount, sender_id, recipient_id FROM transaction WHERE id = ?";
     private static final String READ_ALL = "SELECT id, amount, sender_id, recipient_id FROM transaction";
-    private static final String INSERT = "INSERT INTO transaction (amount, sender_id, recipient_id) VALUES (?, ?)";
+    private static final String INSERT = "INSERT INTO transaction (amount, sender_id, recipient_id) VALUES (?, ?, ?)";
     private static final String DELETE = "DELETE FROM transaction WHERE id = ?";
     private static final String UPDATE = "UPDATE transaction SET amount = ?, customer_id = ?, recipient_id = ? WHERE id = ?";
-    private static final String READ_ALL_FOR = "SELECT id, amount, sender_id, recipient_id FROM transaction WHERE customer_id = ?";
+    private static final String READ_ALL_FOR = "SELECT id, amount, sender_id, recipient_id FROM transaction WHERE sender_id = ?";
 
     public TransactionDAO(Connection connection) {
         super(connection);
@@ -113,11 +113,11 @@ public class TransactionDAO extends DataAccsessObject<Transaction> {
 
     }
 
-    public List<Transaction> findAllTransactionsByCustomerId(long customer_id) {
+    public List<Transaction> findAllTransactionsByCustomerId(long sender_id) {
         List<Transaction> transactions = new ArrayList<>();
 
         try (PreparedStatement statement = this.connection.prepareStatement(READ_ALL_FOR)) {
-            statement.setLong(1, customer_id);
+            statement.setLong(1, sender_id);
             ResultSet resultSet = statement.executeQuery();
             while(resultSet.next()) {
                 Transaction transaction = new Transaction();

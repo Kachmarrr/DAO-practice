@@ -9,7 +9,7 @@ public interface TransactionService {
 
     Transaction proccesTransaction(Long customerId, BigDecimal amount);
     Transaction transferTrxBetweenCustomers(Long senderId, Long recipientId, BigDecimal amount);
-    List<Transaction> getTrx(Long customerId);
+    Transaction getTrx(Long transactionId);
     void updateTrx(Transaction newTransaction);
     void deleteTrx(Long transactionId);
     List<Transaction> getAllTrx();

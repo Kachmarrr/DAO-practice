@@ -25,7 +25,7 @@ public abstract class DataAccsessObject <T extends DataTransferObject> {
     public abstract T create(T dto);
     public abstract void delete(long id);
 
-    protected int getLastVal(String sequence) {
+    public int getLastVal(String sequence) {
 
         int key = 0;
         String sql = LAST_VAL + sequence;

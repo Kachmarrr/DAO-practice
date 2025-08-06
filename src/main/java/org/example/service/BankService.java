@@ -8,10 +8,10 @@ import java.util.List;
 public interface BankService {
 
     Bank createBank(Bank bank);
-    void addCustomerToBank(Customer customer);
+    void addCustomerToBank(Long bankId, Long customerId);
     List<Bank> findAllBanks();
     Bank findBankById(Long bankId);
-    List<Customer> findAllCustomersById(Long bankId);
+    List<Customer> findAllCustomersInBankById(Long bankId);
     void updateBank(Bank bank);
     void deleteBank(Long bankId);
 

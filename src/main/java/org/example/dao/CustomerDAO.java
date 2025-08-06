@@ -17,6 +17,7 @@ public class CustomerDAO extends DataAccsessObject<Customer> {
     private static final String UPDATE = "UPDATE customer SET first_name = ?, last_name = ?, email = ?, balance = ? WHERE id = ?";
     private static final String DELETE = "DELETE FROM customer WHERE id = ?";
     private static final String READ = "SELECT id, first_name, last_name, email, balance, bank_id FROM customer";
+    private static final String READ_FOR = "SELECT id, first_name, last_name, email, balance, bank_id FROM customer WHERE bank_id = ?";
 
     public CustomerDAO(Connection connection) {
         super(connection);
@@ -25,9 +26,7 @@ public class CustomerDAO extends DataAccsessObject<Customer> {
     @Override
     public Customer findById(long id) {
         Customer customer = new Customer();
-
         try (PreparedStatement statement = this.connection.prepareStatement(GET_ONE)) {
-
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -35,9 +34,8 @@ public class CustomerDAO extends DataAccsessObject<Customer> {
                 customer.setFirstName(resultSet.getString("first_name"));
                 customer.setLastName(resultSet.getString("last_name"));
                 customer.setEmail(resultSet.getString("email"));
-                // customer.setTransactions(resultSet.getString(""));
+                customer.setBalance(resultSet.getBigDecimal("balance"));
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
@@ -115,6 +113,26 @@ public class CustomerDAO extends DataAccsessObject<Customer> {
         }
     }
 
+    public List<Customer> findAllCustomersInBank(Long bank_id) {
+        List<Customer> bankCustomers = new ArrayList<>();
 
+        try (PreparedStatement statement = this.connection.prepareStatement(READ_FOR)) {
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Customer customer = new Customer();
+                customer.setId(resultSet.getLong("id"));
+                customer.setFirstName(resultSet.getString("first_name"));
+                customer.setLastName(resultSet.getString("last_name"));
+                customer.setEmail(resultSet.getString("email"));
+                customer.setBalance(resultSet.getBigDecimal("balance"));
+                customer.setBankId(resultSet.getLong("bank_id"));
+                bankCustomers.add(customer);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+        return bankCustomers;
+    }
 }
 

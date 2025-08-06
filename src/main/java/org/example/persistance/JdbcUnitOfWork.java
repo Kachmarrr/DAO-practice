@@ -9,14 +9,14 @@ import org.example.model.Transaction;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class UnitOfWorkImpl implements UnitOfWork {
+public class JdbcUnitOfWork implements UnitOfWork {
 
     private final DatabaseConnectionManager dcm;
     private Connection connection;
     private CustomerDAO customerDAO;
     private TransactionDAO transactionDAO;
 
-    public UnitOfWorkImpl(DatabaseConnectionManager dcm) throws SQLException {
+    public JdbcUnitOfWork(DatabaseConnectionManager dcm) throws SQLException {
         this.dcm = dcm;
     }
 
@@ -25,8 +25,9 @@ public class UnitOfWorkImpl implements UnitOfWork {
         connection = dcm.getConnection();
         connection.setAutoCommit(false);
 
-        customerDAO = new CustomerDAO(connection);
         transactionDAO = new TransactionDAO(connection);
+        customerDAO = new CustomerDAO(connection);
+
     }
 
     @Override

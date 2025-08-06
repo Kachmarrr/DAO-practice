@@ -16,7 +16,7 @@ public class Transaction implements DataTransferObject {
 
     private Long id;
     private BigDecimal amount;
-    private Long sender_id; // чи краще зберігати private Customer ???
+    private Long sender_id;
     private Long recipient_id; // чи краще зберігати private Customer ???
 
     public long getId() {

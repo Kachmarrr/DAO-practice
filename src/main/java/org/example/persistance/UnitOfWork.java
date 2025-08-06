@@ -7,7 +7,7 @@ import org.example.model.Transaction;
 
 import java.sql.SQLException;
 
-public interface UnitOfWork extends AutoCloseable{
+public interface UnitOfWork extends AutoCloseable {
 
     void begin() throws SQLException;
     void commit() throws SQLException;

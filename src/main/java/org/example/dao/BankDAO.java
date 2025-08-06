@@ -1,6 +1,7 @@
 package org.example.dao;
 
 import org.example.model.Bank;
+import org.example.model.Customer;
 import org.example.util.DataAccsessObject;
 
 import java.sql.Connection;
@@ -101,6 +102,5 @@ public class BankDAO extends DataAccsessObject<Bank> {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-
     }
 }
