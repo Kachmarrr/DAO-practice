@@ -32,7 +32,7 @@ public class BankDAO extends DataAccsessObject<Bank> {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
 
-                bank.setId(resultSet.getInt("id"));
+                bank.setId(resultSet.getLong("id"));
                 bank.setName(resultSet.getString("name"));
 
             }

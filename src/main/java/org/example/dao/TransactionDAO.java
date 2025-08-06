@@ -16,7 +16,7 @@ public class TransactionDAO extends DataAccsessObject<Transaction> {
     private static final String READ_ALL = "SELECT id, amount, sender_id, recipient_id FROM transaction";
     private static final String INSERT = "INSERT INTO transaction (amount, sender_id, recipient_id) VALUES (?, ?, ?)";
     private static final String DELETE = "DELETE FROM transaction WHERE id = ?";
-    private static final String UPDATE = "UPDATE transaction SET amount = ?, customer_id = ?, recipient_id = ? WHERE id = ?";
+    private static final String UPDATE = "UPDATE transaction SET amount = ?, sender_id = ?, recipient_id = ? WHERE id = ?";
     private static final String READ_ALL_FOR = "SELECT id, amount, sender_id, recipient_id FROM transaction WHERE sender_id = ?";
 
     public TransactionDAO(Connection connection) {
@@ -35,12 +35,13 @@ public class TransactionDAO extends DataAccsessObject<Transaction> {
                 transaction.setAmount(resultSet.getBigDecimal("amount"));
                 transaction.setSender_id(resultSet.getLong("sender_id"));
                 transaction.setRecipient_id(resultSet.getLong("recipient_id"));
+                return transaction;
             }
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-        return transaction;
+        return null;
     }
 
     @Override
@@ -71,6 +72,7 @@ public class TransactionDAO extends DataAccsessObject<Transaction> {
             statement.setBigDecimal(1, dto.getAmount());
             statement.setLong(2, dto.getSender_id());
             statement.setLong(3, dto.getRecipient_id());
+            statement.setLong(4, dto.getId());
             statement.execute();
 
             Transaction transaction = this.findById(dto.getId());
