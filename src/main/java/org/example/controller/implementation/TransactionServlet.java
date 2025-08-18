@@ -72,7 +72,7 @@ public class TransactionServlet extends AbstractServlet<Transaction> {
     }
 
     @Override
-    protected ServletService getCRUD() {
+    protected ServletService getService() {
         return servletService;
     }
 

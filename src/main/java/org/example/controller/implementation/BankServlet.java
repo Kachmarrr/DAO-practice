@@ -80,7 +80,7 @@ public class BankServlet extends AbstractServlet<Bank> {
         };
     }
     @Override
-    protected ServletService<Bank> getCRUD() {
+    protected ServletService<Bank> getService() {
         return servletService;
     }
 
