@@ -3,7 +3,7 @@ package org.example.controller.implementation;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import org.example.controller.AbstractServlet;
-import org.example.controller.CRUD;
+import org.example.controller.ServletService;
 import org.example.dao.BankDAO;
 import org.example.dao.CustomerDAO;
 import org.example.model.Bank;
@@ -32,7 +32,7 @@ import java.util.List;
 public class BankServlet extends AbstractServlet<Bank> {
 
     private BankService bankService;
-    private CRUD<Bank> crud;
+    private ServletService<Bank> servletService;
     private DatabaseConnectionManager databaseConnectionManager;
 
     @Override
@@ -52,7 +52,7 @@ public class BankServlet extends AbstractServlet<Bank> {
         CustomerDAO customerDAO = new CustomerDAO(connection);
         bankService = new BankServiceImpl(bankDAO, customerDAO);
 
-        crud = new CRUD<Bank>() {
+        servletService = new ServletService<Bank>() {
             @Override
             public List<Bank> findAll() {
                return bankService.findAllBanks();
@@ -80,8 +80,8 @@ public class BankServlet extends AbstractServlet<Bank> {
         };
     }
     @Override
-    protected CRUD<Bank> getCRUD() {
-        return crud;
+    protected ServletService<Bank> getCRUD() {
+        return servletService;
     }
 
     @Override

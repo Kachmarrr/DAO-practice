@@ -1,11 +1,9 @@
 package org.example.controller.implementation;
 
-import com.google.gson.Gson;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
 import org.example.controller.AbstractServlet;
-import org.example.controller.CRUD;
+import org.example.controller.ServletService;
 import org.example.model.Transaction;
 import org.example.persistance.DatabaseConnectionManager;
 import org.example.persistance.JdbcUnitOfWork;
@@ -13,8 +11,6 @@ import org.example.persistance.UnitOfWork;
 import org.example.service.TransactionService;
 import org.example.service.implementation.TransactionServiceImpl;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -35,7 +31,7 @@ public class TransactionServlet extends AbstractServlet<Transaction> {
 
     private TransactionService transactionService;
     private DatabaseConnectionManager databaseConnectionManager;
-    private CRUD crud;
+    private ServletService servletService;
 
     @Override
     public void init() throws ServletException {
@@ -46,7 +42,7 @@ public class TransactionServlet extends AbstractServlet<Transaction> {
         UnitOfWork unitOfWork = new JdbcUnitOfWork(databaseConnectionManager);
         transactionService = new TransactionServiceImpl(unitOfWork);
 
-        crud = new CRUD<Transaction>() {
+        servletService = new ServletService<Transaction>() {
 
             @Override
             public List<Transaction> findAll() {
@@ -76,8 +72,8 @@ public class TransactionServlet extends AbstractServlet<Transaction> {
     }
 
     @Override
-    protected CRUD getCRUD() {
-        return crud;
+    protected ServletService getCRUD() {
+        return servletService;
     }
 
     @Override
