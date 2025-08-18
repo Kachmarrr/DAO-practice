@@ -1,0 +1,24 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="bank-system:war exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/bank_system_war_exploded</output-path>
+    <root id="root">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="bank-system" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="Maven: org.projectlombok:lombok:1.18.38" />
+          <element id="library" level="project" name="Maven: org.postgresql:postgresql:42.7.7" />
+          <element id="library" level="project" name="Maven: org.checkerframework:checker-qual:3.49.3" />
+          <element id="library" level="project" name="Maven: com.zaxxer:HikariCP:6.3.1" />
+          <element id="library" level="project" name="Maven: org.slf4j:slf4j-api:1.7.36" />
+          <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.19.2" />
+          <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.19.2" />
+          <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-core:2.19.2" />
+          <element id="library" level="project" name="Maven: com.google.code.gson:gson:2.10.1" />
+        </element>
+      </element>
+      <element id="javaee-facet-resources" facet="bank-system/web/Web" />
+    </root>
+  </artifact>
+</component>
