@@ -117,6 +117,7 @@ public class CustomerDAO extends DataAccsessObject<Customer> {
         List<Customer> bankCustomers = new ArrayList<>();
 
         try (PreparedStatement statement = this.connection.prepareStatement(READ_FOR)) {
+            statement.setLong(1, bank_id);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 Customer customer = new Customer();

@@ -16,5 +16,10 @@ public class Bank implements DataTransferObject {
     private long id;
     private String name;
 
-    List<Customer> users = new ArrayList<>();
+    List<Customer> customers = new ArrayList<>();
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

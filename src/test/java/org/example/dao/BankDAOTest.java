@@ -99,8 +99,10 @@ class BankDAOTest {
     @Test
     void testUpdate() throws Exception {
         long id = 7L;
-        Bank input = new Bank().setId(id).setName("NewName");
-        Bank updated = new Bank().setId(id).setName("NewName");
+        Bank input = new Bank().setName("NewName");
+        input.setId(id);
+        Bank updated = new Bank().setName("NewName");
+        updated.setId(id);
 
         doReturn(updated).when(bankDAO).findById(id);
 
@@ -118,10 +120,11 @@ class BankDAOTest {
     @Test
     void testCreate() throws Exception {
         Bank input = new Bank().setName("CreatedBank");
-        int fakeId = 42;
+        Long fakeId = 42L;
 
         doReturn(fakeId).when(bankDAO).getLastVal(anyString());
-        Bank created = new Bank().setId(fakeId).setName("CreatedBank");
+        Bank created = new Bank().setName("CreatedBank");
+        created.setId(fakeId);
         doReturn(created).when(bankDAO).findById(fakeId);
 
         Bank result = bankDAO.create(input);

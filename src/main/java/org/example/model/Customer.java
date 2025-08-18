@@ -30,6 +30,9 @@ public class Customer implements DataTransferObject {
     public long getId() {
         return id != null ? id : 0L;
     }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     @Override
     public String toString() {

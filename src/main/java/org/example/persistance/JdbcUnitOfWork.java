@@ -1,26 +1,23 @@
 package org.example.persistance;
 
-import lombok.Getter;
 import org.example.dao.CustomerDAO;
 import org.example.dao.TransactionDAO;
-import org.example.model.Customer;
-import org.example.model.Transaction;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class JdbcUnitOfWork implements UnitOfWork {
+public class JdbcUnitOfWork implements UnitOfWork, AutoCloseable {
 
     private final DatabaseConnectionManager dcm;
     private Connection connection;
     private CustomerDAO customerDAO;
     private TransactionDAO transactionDAO;
+    private boolean committed = false;
 
-    public JdbcUnitOfWork(DatabaseConnectionManager dcm) throws SQLException {
+    public JdbcUnitOfWork(DatabaseConnectionManager dcm) {
         this.dcm = dcm;
     }
 
-    @Override
     public void begin() throws SQLException {
         connection = dcm.getConnection();
         connection.setAutoCommit(false);
@@ -28,16 +25,21 @@ public class JdbcUnitOfWork implements UnitOfWork {
         transactionDAO = new TransactionDAO(connection);
         customerDAO = new CustomerDAO(connection);
 
+        committed = false;
     }
 
     @Override
     public void commit() throws SQLException {
+        if (connection == null) {
+            throw new SQLException("No active transaction to commit");
+        }
         connection.commit();
+        committed = true;
     }
 
     @Override
     public void rollback() throws SQLException {
-        if (connection != null) {
+        if (connection != null && !connection.isClosed()) {
             connection.rollback();
         }
     }
@@ -54,8 +56,18 @@ public class JdbcUnitOfWork implements UnitOfWork {
 
     @Override
     public void close() throws SQLException {
-        if (connection != null && !connection.isClosed()) {
-            connection.close();
+        if (connection == null) return;
+
+        try {
+            if (!committed && !connection.getAutoCommit()) {
+                connection.rollback(); // автоматичний rollback якщо commit не викликано
+            }
+            connection.setAutoCommit(true);
+        } finally {
+            if (!connection.isClosed()) {
+                connection.close();
+            }
+            connection = null;
         }
     }
 }

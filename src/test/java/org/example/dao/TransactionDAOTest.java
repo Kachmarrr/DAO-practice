@@ -133,8 +133,8 @@ class TransactionDAOTest {
         long recipient = 6L;
         Transaction input = new Transaction().setAmount(amount).setSender_id(sender).setRecipient_id(recipient);
         long fakeId = 77L;
-        Transaction created = new Transaction().setId(fakeId).setAmount(amount).setSender_id(sender).setRecipient_id(recipient);
-
+        Transaction created = new Transaction().setAmount(amount).setSender_id(sender).setRecipient_id(recipient);
+        created.setId(fakeId);
         doReturn((int)fakeId).when(transactionDAO).getLastVal(anyString());
         doReturn(created).when(transactionDAO).findById(fakeId);
 
@@ -161,8 +161,10 @@ class TransactionDAOTest {
         BigDecimal newAmount = BigDecimal.valueOf(99);
         long sender = 10L;
         long recipient = 20L;
-        Transaction input = new Transaction().setId(id).setAmount(newAmount).setSender_id(sender).setRecipient_id(recipient);
-        Transaction updated = new Transaction().setId(id).setAmount(newAmount).setSender_id(sender).setRecipient_id(recipient);
+        Transaction input = new Transaction().setAmount(newAmount).setSender_id(sender).setRecipient_id(recipient);
+        input.setId(id);
+        Transaction updated = new Transaction().setAmount(newAmount).setSender_id(sender).setRecipient_id(recipient);
+        updated.setId(id);
 
         doReturn(updated).when(transactionDAO).findById(id);
 

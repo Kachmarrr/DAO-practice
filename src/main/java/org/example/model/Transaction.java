@@ -25,4 +25,7 @@ public class Transaction implements DataTransferObject {
         return id != null ? id : 0L;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

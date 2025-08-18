@@ -6,6 +6,7 @@ import org.example.model.Bank;
 import org.example.model.Customer;
 import org.example.service.BankService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BankServiceImpl implements BankService {
@@ -32,12 +33,20 @@ public class BankServiceImpl implements BankService {
 
     @Override
     public List<Bank> findAllBanks() {
-        return bankDAO.findAll();
+
+        return bankDAO.findAll().stream()
+                .peek(bank -> bank.setCustomers(customerDAO.findAllCustomersInBank(bank.getId())))
+                .toList();
+
     }
 
     @Override
     public Bank findBankById(Long bankId) {
-        return bankDAO.findById(bankId);
+
+        Bank bank = bankDAO.findById(bankId);
+        List<Customer> customers = customerDAO.findAllCustomersInBank(bankId);
+        bank.setCustomers(customers);
+        return bank;
     }
 
     @Override
