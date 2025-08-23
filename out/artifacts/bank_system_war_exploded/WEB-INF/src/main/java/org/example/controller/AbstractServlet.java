@@ -22,7 +22,7 @@ public abstract class AbstractServlet<T extends DataTransferObject> extends Http
     private static final Logger LOG = Logger.getLogger(AbstractServlet.class.getName());
     protected Gson gson;
 
-    protected abstract CRUD<T> getCRUD();
+    protected abstract ServletService<T> getService ();
     protected abstract Class<T> getModelClass();
 
 
@@ -38,7 +38,7 @@ public abstract class AbstractServlet<T extends DataTransferObject> extends Http
             String pathInfo = checkPath(request.getPathInfo());
 
             if (pathInfo == null) {
-                List<T> all = getCRUD().findAll();
+                List<T> all = getService().findAll();
                 writeJson(response, HttpServletResponse.SC_OK, all);
                 return;
             }
@@ -49,7 +49,7 @@ public abstract class AbstractServlet<T extends DataTransferObject> extends Http
                 return;
             }
 
-            T found = getCRUD().findById(id);
+            T found = getService().findById(id);
             if (found == null) {
                 writeError(response, HttpServletResponse.SC_NOT_FOUND, "Not found");
                 return;
@@ -71,7 +71,7 @@ public abstract class AbstractServlet<T extends DataTransferObject> extends Http
                 return;
             }
 
-            T created = getCRUD().create(body);
+            T created = getService().create(body);
             writeJson(response, HttpServletResponse.SC_CREATED, created);
         } catch (JsonSyntaxException jse) {
             writeError(response, HttpServletResponse.SC_BAD_REQUEST, "Invalid JSON: " + safeMessage(jse));
@@ -94,10 +94,10 @@ public abstract class AbstractServlet<T extends DataTransferObject> extends Http
             // Ось воно — встановлюємо id з URL, ігноруючи те, що прийшло в JSON
             body.setId(id);
 
-            T existing = getCRUD().findById(id);
+            T existing = getService().findById(id);
             if (existing == null) { writeError(resp, HttpServletResponse.SC_NOT_FOUND, "Not found"); return; }
 
-            getCRUD().update(body);
+            getService().update(body);
             writeJson(resp, HttpServletResponse.SC_OK, body);
 
         } catch (JsonSyntaxException jse) {
@@ -118,7 +118,7 @@ public abstract class AbstractServlet<T extends DataTransferObject> extends Http
                 return;
             }
 
-            getCRUD().delete(id);
+            getService().delete(id);
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
         } catch (Exception e) {
             LOG.log(Level.SEVERE, "DELETE error", e);

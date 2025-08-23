@@ -16,6 +16,8 @@ import org.example.service.implementation.CustomerServiceImpl;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -49,15 +51,19 @@ public class CustomerServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         gson = new Gson();
+
+        Path path = Paths.get("/main/resources/db.properties");
         try {
             // consider moving DB config to web.xml / env vars
-            databaseConnectionManager = new DatabaseConnectionManager("localhost", "postgres", "postgres", "1234");
+            databaseConnectionManager = DatabaseConnectionManager.fromClasspathResource("db.properties");
             Connection connection = databaseConnectionManager.getConnection();
             TransactionDAO transactionDAO = new TransactionDAO(connection);
             customerService = new CustomerServiceImpl(connection, transactionDAO);
         } catch (SQLException e) {
             LOG.log(Level.SEVERE, "Failed to initialize DB connection", e);
             throw new ServletException("Cannot connect to database", e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

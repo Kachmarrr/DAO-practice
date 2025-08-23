@@ -22,7 +22,7 @@ public abstract class AbstractServlet<T extends DataTransferObject> extends Http
     private static final Logger LOG = Logger.getLogger(AbstractServlet.class.getName());
     protected Gson gson;
 
-    protected abstract ServletService<T> getService();
+    protected abstract ServletService<T> getService ();
     protected abstract Class<T> getModelClass();
 
 

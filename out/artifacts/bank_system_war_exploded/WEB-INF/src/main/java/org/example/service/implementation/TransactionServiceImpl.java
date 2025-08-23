@@ -3,6 +3,7 @@ package org.example.service.implementation;
 import org.example.model.Customer;
 import org.example.model.Transaction;
 import org.example.persistance.JdbcUnitOfWork;
+import org.example.persistance.UnitOfWork;
 import org.example.service.TransactionService;
 
 import java.math.BigDecimal;
@@ -11,9 +12,9 @@ import java.util.List;
 
 public class TransactionServiceImpl implements TransactionService {
 
-    private final JdbcUnitOfWork unitOfWork;
+    private final UnitOfWork unitOfWork;
 
-    public TransactionServiceImpl(JdbcUnitOfWork unitOfWork) {
+    public TransactionServiceImpl(UnitOfWork unitOfWork) {
         this.unitOfWork = unitOfWork;
     }
 
